@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>UltimateHUD</title>
+    <script type="text/javascript" src="jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="hud">
+        <div class="health info">
+            <div id="health" class="health-bar">
+                <i class="fa-solid fa-heart image"></i>
+            </div>
+        </div>
+        <div class="armour info" style="margin-left: 10px;">
+            <div id="armour" class="armour-bar">
+                <i class="fa-solid fa-shield image"></i>
+            </div>
+        </div>
+        <div class="hunger info" style="margin-right: 10px;margin-left: 10px;">
+            <div id="hunger" class="hunger-bar">
+                <i class="fa-solid fa-burger image"></i>
+            </div>
+        </div>
+        <div class="thirst info" style="margin-right: 10px;">
+            <div id="thirst" class="thirst-bar">
+                <i class="fa-solid fa-glass-water image"></i>
+            </div>
+        </div>
+        <div class="stamina info" style="margin-right: 10px;">
+            <div id="stamina" class="stamina-bar">
+                <i class="fa-solid fa-person-running image"></i>
+            </div>
+        </div>
+        <div class="voice info">
+            <div id="voice" class="voice-bar">
+                <i class="fa-solid fa-headset image"></i>
+            </div>
+        </div>
+    </div>
+    <div id="carhud">
+        <div class="fuel info">
+            <div id="fuel" class="fuel-bar">
+                <i class="fa-solid fa-gas-pump image"></i>
+            </div>
+        </div>
+        <div id="car">
+            <a id="velocidade">Ult</a>
+            <span id="kmh">km/h</span>
+        </div>
+        <div class="carfix info">
+            <div id="carfix" class="carfix-bar">
+                <i class="fa-solid fa-wrench image"></i>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/progressbar.js/0.9.0/progressbar.min.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+</body>
+
+</html>

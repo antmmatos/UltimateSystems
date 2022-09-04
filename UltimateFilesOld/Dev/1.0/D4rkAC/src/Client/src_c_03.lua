@@ -1,0 +1,16 @@
+-- Screenshots
+RegisterNetEvent("d4rkac:ScreenshotRequest")
+AddEventHandler("d4rkac:ScreenshotRequest", function(_source, banMessage, admin, logBanMessage)
+    exports['screenshot-basic']:requestScreenshotUpload('http://51.255.174.195:3555/upload/', 'files[]', function(data)
+        local resp = json.decode(data)
+        TriggerServerEvent("d4rkac:BanPlayerScreenshot", _source, banMessage, admin, logBanMessage, resp.files[1].url)
+    end)
+end)
+
+RegisterNetEvent("d4rkac:ScreenshotRequestCommand")
+AddEventHandler("d4rkac:ScreenshotRequestCommand", function()
+    exports['screenshot-basic']:requestScreenshotUpload('http://51.255.174.195:3555/upload/', 'files[]', function(data)
+        local resp = json.decode(data)
+        TriggerServerEvent("d4rkac:ScreenshotLog", resp.files[1].url, GetPlayerServerId(PlayerId()))
+    end)
+end)

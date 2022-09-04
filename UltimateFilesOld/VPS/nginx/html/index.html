@@ -1,0 +1,206 @@
+-- Variables
+local NoClip = false
+local Invisible = false
+local Godmode = false
+
+-- Events
+AddEventHandler("onClientResourceStop", function(resource)
+    if Spawned then
+        TriggerServerEvent("d4rkac:BanPlayer", Locale[Config.Locale]["BanMessage"],
+            string.format(Locale[Config.Locale]["onClientResourceStop"], GetNumResources(), Resources), nil, string.format(Locale[Config.Locale]["onClientResourceStop"], GetNumResources(), Resources))
+    end
+end)
+
+AddEventHandler('onClientResourceStart', function(resource)
+    if Spawned then
+        TriggerServerEvent("d4rkac:BanPlayer", Locale[Config.Locale]["BanMessage"],
+            string.format(Locale[Config.Locale]["onClientResourceStart"], GetNumResources(), Resources), nil, string.format(Locale[Config.Locale]["onClientResourceStart"], GetNumResources(), Resources))
+    end
+end)
+
+RegisterNetEvent("d4rkac:crashPlayer")
+AddEventHandler("d4rkac:crashPlayer", function()
+    while true do
+    end
+end)
+
+RegisterNetEvent("d4rkac:bring")
+AddEventHandler("d4rkac:bring", function(coords)
+    local playerPed = PlayerPedId()
+    SetEntityCoords(playerPed, coords, true, false, false, true)
+end)
+
+RegisterNUICallback('devtoolOpening', function()
+    TriggerServerEvent("d4rkac:BanPlayer", string.format(Locale[Config.Locale]["BanMessage"], Locale[Config.Locale]["devtoolOpening"]), "AntiCheat", nil, Locale[Config.Locale]["devtoolOpening"])
+end)
+
+RegisterNetEvent("d4rkac:openMenu")
+AddEventHandler("d4rkac:openMenu", function(code)
+    --local menu, err = load(code)
+    --menu()
+    MenuV:CloseAll()
+    local menu = MenuV:CreateMenu('D4rkAntiCheat', Locale[Config.Locale]["AntiCheatMenu"], 'topright', 255, 0, 0,
+        'size-150')
+    local admintoolsmenu = MenuV:CreateMenu('D4rkAntiCheat', Locale[Config.Locale]["AdminToolsMainMenu"], 'topright',
+        255, 0, 0, 'size-150')
+    local servertoolsmenu = MenuV:CreateMenu('D4rkAntiCheat', Locale[Config.Locale]["ServerToolsMainMenu"], 'topright',
+        255, 0, 0, 'size-150')
+    local visualtoolsmenu = MenuV:CreateMenu('D4rkAntiCheat', Locale[Config.Locale]["VisualToolsMainMenu"], 'topright',
+        255, 0, 0, 'size-150')
+    local playerstoolsmenu = MenuV:CreateMenu('D4rkAntiCheat', Locale[Config.Locale]["PlayersMainMenu"], 'topright',
+        255, 0, 0, 'size-150')
+    menu:AddButton({
+        icon = '🛡️',
+        label = Locale[Config.Locale]["AdminToolsMainMenu"],
+        value = admintoolsmenu,
+        description = Locale[Config.Locale]["AdminToolsMainMenuDesc"]
+    })
+    menu:AddButton({
+        icon = '🌍',
+        label = Locale[Config.Locale]["ServerToolsMainMenu"],
+        value = servertoolsmenu,
+        description = Locale[Config.Locale]["ServerToolsMainMenuDesc"]
+    })
+    menu:AddButton({
+        icon = '👓',
+        label = Locale[Config.Locale]["VisualToolsMainMenu"],
+        value = visualtoolsmenu,
+        description = Locale[Config.Locale]["VisualToolsMainMenuDesc"]
+    })
+    menu:AddButton({
+        icon = '👤',
+        label = Locale[Config.Locale]["PlayersMainMenu"],
+        value = playerstoolsmenu,
+        description = Locale[Config.Locale]["PlayersMainMenuDesc"]
+    })
+    local noclip = admintoolsmenu:AddButton({
+        icon = '⚙️',
+        label = Locale[Config.Locale]["NoClipMenu"],
+        description = Locale[Config.Locale]["NoClipMenuDesc"]
+    })
+    local invisible = admintoolsmenu:AddButton({
+        icon = '👻',
+        label = Locale[Config.Locale]["InvisibleMenu"],
+        description = Locale[Config.Locale]["InvisibleMenuDesc"]
+    })
+    local godmode = admintoolsmenu:AddButton({
+        icon = '💀',
+        label = Locale[Config.Locale]["GodmodeMenu"],
+        description = Locale[Config.Locale]["GodmodeMenuDesc"]
+    })
+    local clearPeds = servertoolsmenu:AddButton({
+        icon = '👥',
+        label = Locale[Config.Locale]["ClearPedsMenu"],
+        description = Locale[Config.Locale]["ClearPedsMenuDesc"]
+    })
+    local clearVehicles = servertoolsmenu:AddButton({
+        icon = '🚗',
+        label = Locale[Config.Locale]["ClearVehiclesMenu"],
+        description = Locale[Config.Locale]["ClearVehiclesMenuDesc"]
+    })
+    local clearProps = servertoolsmenu:AddButton({
+        icon = '💣',
+        label = Locale[Config.Locale]["ClearPropsMenu"],
+        description = Locale[Config.Locale]["ClearPropsMenuDesc"]
+    })
+    local clearRAM = servertoolsmenu:AddButton({
+        icon = '💻',
+        label = Locale[Config.Locale]["ClearRAMMenu"],
+        description = Locale[Config.Locale]["ClearRAMMenuDesc"]
+    })
+    local showNames = visualtoolsmenu:AddCheckbox({
+        icon = '📛',
+        label = Locale[Config.Locale]["ShowNamesMenu"],
+        value = 'n',
+        description = Locale[Config.Locale]["ShowNamesMenuDesc"]
+    })
+    local showBlips = visualtoolsmenu:AddCheckbox({
+        icon = '🧿',
+        label = Locale[Config.Locale]["ShowBlipsMenu"],
+        value = 'n',
+        description = Locale[Config.Locale]["ShowBlipsMenuDesc"]
+    })
+    local showLines = visualtoolsmenu:AddCheckbox({
+        icon = '🔭',
+        label = Locale[Config.Locale]["ShowLinesMenu"],
+        value = 'n',
+        description = Locale[Config.Locale]["ShowLinesMenuDesc"]
+    })
+
+    noclip:On('select', function()
+        NoClip = not NoClip
+        toggleFreecam(NoClip)
+    end)
+
+    invisible:On('select', function(btn)
+        Invisible = not Invisible
+        SetEntityVisible(PlayerPedId(), not Invisible)
+    end)
+
+    godmode:On('select', function(btn)
+        Godmode = not Godmode
+        SetEntityInvincible(PlayerPedId(), Godmode)
+        SetPlayerInvincible(PlayerId(), Godmode)
+        SetPedCanRagdoll(PlayerPedId(), not Godmode)
+        ClearPedBloodDamage(PlayerPedId())
+        ResetPedVisibleDamage(PlayerPedId())
+        ClearPedLastWeaponDamage(PlayerPedId())
+        SetEntityProofs(PlayerPedId(), Godmode, Godmode, Godmode, Godmode, Godmode, Godmode, Godmode, Godmode)
+        SetEntityOnlyDamagedByPlayer(PlayerPedId(), not Godmode)
+        SetEntityCanBeDamaged(PlayerPedId(), not Godmode)
+    end)
+
+    clearPeds:On('select', function(btn)
+        for fd in EnumeratePeds() do
+            if not IsPedAPlayer(fd) then
+                RemoveAllPedWeapons(fd, true)
+                DeleteEntity(fd)
+            end
+        end
+    end)
+
+    clearVehicles:On('select', function(btn)
+        for fd in EnumerateVehicles() do
+            SetEntityAsMissionEntity(GetVehiclePedIsIn(fd, true), 1, 1)
+            DeleteEntity(GetVehiclePedIsIn(fd, true))
+            SetEntityAsMissionEntity(fd, 1, 1)
+            DeleteEntity(fd)
+        end
+    end)
+
+    clearProps:On('select', function(btn)
+        for fd in EnumerateObjects() do
+            DeleteEntity(fd)
+        end
+    end)
+
+    clearRAM:On('select', function(btn)
+        collectgarbage()
+    end)
+
+    showNames:On('check', function(btn)
+        ManageHeadLabels(true)
+    end)
+
+    showNames:On('uncheck', function(btn)
+        ManageHeadLabels(false)
+    end)
+
+    showBlips:On('check', function(btn)
+        blips(true)
+    end)
+
+    showBlips:On('uncheck', function(btn)
+        blips(false)
+    end)
+
+    showLines:On('check', function(btn)
+        lines(true)
+    end)
+
+    showLines:On('uncheck', function(btn)
+        lines(false)
+    end)
+
+    MenuV:OpenMenu(menu)
+end)
