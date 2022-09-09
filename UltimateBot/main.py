@@ -1,5 +1,5 @@
-from optparse import Option
 import discord
+from discord import Option
 from discord.ext import commands, tasks
 import mysql.connector
 from config import *
@@ -61,6 +61,7 @@ async def avisotask():
                 mysqlconnection.commit()
                 await username.remove_roles(role)
 
+
 @tasks.loop(minutes=5.0)
 async def avisoorgtask():
     mysqlconnection = mysql.connector.connect(
@@ -102,6 +103,7 @@ async def avisoorgtask():
                 mysqlconnection.commit()
                 await username.remove_roles(role)
 
+
 @tasks.loop(minutes=5.0)
 async def avisostafftask():
     mysqlconnection = mysql.connector.connect(
@@ -142,6 +144,7 @@ async def avisostafftask():
                     f"DELETE FROM `avisosstaff` WHERE `userid` = {x[0]}")
                 mysqlconnection.commit()
                 await username.remove_roles(role)
+
 
 @tasks.loop(minutes=5.0)
 async def avisofrtask():
@@ -238,9 +241,9 @@ async def limpar(ctx, quantidade: int = None):
 
 @client.command(description="Comando para enviar anúncios.")
 @commands.has_permissions(administrator=True)
-async def anuncio(ctx, acao : Option(str, "Ação", choices=["enviar", "adicionar", "remover", "cancelar", "lista"]), tipo : Option(str, "Tipo"), *, mensagem : Option(str, "Mensagem")):
+async def anuncio(ctx, acao: Option(str, "Ação", choices=["enviar", "adicionar", "remover", "cancelar", "lista"]), tipo: Option(str, "Tipo", required=False), *, mensagem: Option(str, "Mensagem", required=False)):
     if acao == "enviar":
-        #TODO Enviar anuncio
+        # TODO Enviar anuncio
         pass
     elif acao == "adicionar":
         await ctx.defer()
@@ -290,13 +293,14 @@ async def anuncio(ctx, acao : Option(str, "Ação", choices=["enviar", "adiciona
         mysqlcursor = mysqlconnection.cursor()
         mysqlcursor.execute("SELECT * FROM `anunciodata` ORDER BY tipo")
         result = mysqlcursor.fetchall()
+        embed = discord.Embed(title=f"{ctx.author.display_name}",
+                              description=f"```Lista de mensagens para o próximo anúncio```", color=discord.Colour.random())
+        embed.set_thumbnail(url=f"{ctx.author.avatar.url}")
+        embed.set_footer(text="UltimateBot • 2022")
+        embed.timestamp = datetime.datetime.now()
         for x in result:
-            embed = discord.Embed(title=f"{ctx.author.display_name}",
-                                    description=f"```Lista de mensagens para o próximo anúncio```", color=discord.Colour.random())
-            embed.set_thumbnail(url=f"{ctx.author.avatar.url}")
-            embed.set_footer(text="UltimateBot • 2022")
-            embed.timestamp = datetime.datetime.now()
-            await ctx.respond(embed=embed, delete_after=10)
+            embed.add_field(name=f"Tipo: {x[2]}", value=f"{x[1]}", inline=False)
+        await ctx.respond(embed=embed, delete_after=10)
     elif acao == "cancelar":
         await ctx.defer()
         embed = discord.Embed(title=f"{ctx.author.display_name}",
@@ -331,7 +335,8 @@ async def cooldown(ctx, membro: discord.Member = None):
             f"SELECT * FROM `cooldown` WHERE `userid` = {membro.id}")
         result = mysqlcursor.fetchone()
         if not result:
-            mysqlcursor.execute(f"SELECT * FROM `cooldowntimes` WHERE `userid` = {membro.id}")
+            mysqlcursor.execute(
+                f"SELECT * FROM `cooldowntimes` WHERE `userid` = {membro.id}")
             result = mysqlcursor.fetchone()
             if not result:
                 mysqlcursor.execute(
@@ -373,7 +378,8 @@ async def cooldown(ctx, membro: discord.Member = None):
                 mysqlcursor.execute(
                     f"DELETE FROM `cooldown` WHERE `userid` = {membro.id}")
                 mysqlconnection.commit()
-                mysqlcursor.execute(f"SELECT * FROM `cooldowntimes` WHERE `userid` = {membro.id}")
+                mysqlcursor.execute(
+                    f"SELECT * FROM `cooldowntimes` WHERE `userid` = {membro.id}")
                 result = mysqlcursor.fetchone()
                 if int(result[2]) == 1:
                     mysqlcursor.execute(
@@ -691,6 +697,7 @@ class AvisoCMD(discord.ui.View):  # Create a class called MyView that subclasses
             mysqlcursor.execute(
                 f"INSERT INTO `avisosfaltaderespeito` (`userid`, `username`, `aviso1`, `tempo`) VALUES ({self.membro.id}, '{self.membro.display_name}', 1, 14400)")
             mysqlconnection.commit()
+
 
 @client.command(name="aviso", description="Comando para dar avisos a membros. Requer permissões de administrador.")
 @commands.has_permissions(manage_roles=True)
