@@ -1,0 +1,20 @@
+{
+    "Lua.diagnostics.globals": [
+        "RegisterServerEvent",
+        "AddEventHandler",
+        "TriggerClientEvent",
+        "source",
+        "GetCurrentResourceName",
+        "LoadResourceFile",
+        "Citizen",
+        "json",
+        "SaveResourceFile",
+        "TriggerEvent",
+        "exports",
+        "isStarted"
+    ],
+    "Lua.diagnostics.disable": [
+        "assign-type-mismatch",
+        "undefined-global"
+    ]
+}

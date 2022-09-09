@@ -1,6 +1,7 @@
 Ultimate = nil
 ESX = nil
 isStarted = false
+data = {}
 
 Citizen.CreateThread(function()
     Ultimate = exports["UltimateCore"]:GetUltimateObject()
@@ -59,7 +60,7 @@ Citizen.CreateThread(function()
             if Vdist(pedCoords, Config.StartingBank.x, Config.StartingBank.y, Config.StartingBank.z) < 1.5 then
                 sleep = 0
                 if IsControlJustReleased(0, 38) then
-                    TriggerServerEvent("Ultimate:StartWork")
+                    TriggerServerEvent("UltimateBankDelivery:StartWork")
                 end
             end
         else
@@ -107,7 +108,7 @@ Citizen.CreateThread(function()
                 if Vdist(pedCoords, Config.RefillPoint.x, Config.RefillPoint.y, Config.RefillPoint.z) < 1.5 then
                     sleep = 0
                     if IsControlJustReleased(0, 38) then
-                        TriggerServerEvent("Ultimate:PickupBags")
+                        TriggerServerEvent("UltimateBankDelivery:PickupBags")
                     end
                 end
             else
@@ -133,7 +134,7 @@ Citizen.CreateThread(function()
                 for k, v in pairs(Config.Banks) do
                     if Vdist(pedCoords, v.x, v.y, v.z) < 1.5 then
                         sleep = 0
-                        DrawText3Ds(v.x, v.y, v.z, "[E] - Delivery money")
+                        DrawText3Ds(v.x, v.y, v.z, "[E] - Delivery money\nBalance: $" .. data[k])
                     end
                 end
             else
@@ -160,7 +161,7 @@ Citizen.CreateThread(function()
                     if Vdist(pedCoords, v.x, v.y, v.z) < 1.5 then
                         sleep = 0
                         if IsControlJustReleased(0, 38) then
-                            TriggerServerEvent("Ultimate:DeliveryMoney", k)
+                            TriggerServerEvent("UltimateBankDelivery:DeliveryMoney", k)
                         end
                     end
                 end
@@ -172,6 +173,11 @@ Citizen.CreateThread(function()
         end
         Citizen.Wait(sleep)
     end
+end)
+
+RegisterNetEvent("UltimateBankDelivery:RefreshData")
+AddEventHandler("UltimateBankDelivery:RefreshData", function(data)
+    data = data
 end)
 
 RegisterNetEvent("Ultimate:WorkStatusChanged")

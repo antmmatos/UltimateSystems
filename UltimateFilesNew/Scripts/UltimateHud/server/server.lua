@@ -1,6 +1,12 @@
 Validated = nil
-Ultimate = exports["UltimateCore"]:GetUltimateObject()
 
+if not GetResourceState("UltimateCore") == "started" then
+    print("UltimateCore is not running, please check your server.cfg file")
+    StopResource(GetCurrentResourceName())
+    turnoff()
+end
+
+Ultimate = exports["UltimateCore"]:GetUltimateObject()
 Citizen.CreateThread(function()
     Validated = exports["UltimateCore"]:getAuth(GetCurrentResourceName(), Config.Version)
     Citizen.CreateThread(function()

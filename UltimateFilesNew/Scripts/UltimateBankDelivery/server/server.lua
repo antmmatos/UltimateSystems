@@ -19,15 +19,18 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-
+    while true do
+        Citizen.Wait(1000)
+        TriggerClientEvent("UltimateBankDelivery:RefreshData", -1, data)
+    end
 end)
 
-RegisterServerEvent("Ultimate:StartWork")
-AddEventHandler("Ultimate:StartWork", function()
+RegisterServerEvent("UltimateBankDelivery:StartWork")
+AddEventHandler("UltimateBankDelivery:StartWork", function()
     if not source then
         local _source = source
         isStarted = _source
-        TriggerClientEvent("Ultimate:WorkStatusChanged", source, true)
+        TriggerClientEvent("UltimateBankDelivery:WorkStatusChanged", source, true)
         TriggerClientEvent(Ultimate.GetTrigger("esx:showNotification"), source,
             Locale[Config.Locale]["work_status_changed"])
     else
@@ -35,21 +38,22 @@ AddEventHandler("Ultimate:StartWork", function()
     end
 end)
 
-RegisterServerEvent("Ultimate:DeliveryMoney")
-AddEventHandler("Ultimate:DeliveryMoney", function(bank)
+RegisterServerEvent("UltimateBankDelivery:DeliveryMoney")
+AddEventHandler("UltimateBankDelivery:DeliveryMoney", function(bank)
     local xPlayer = ESX.GetPlayerFromId(source)
     if xPlayer.getInventoryItem().count >= 1 then
         data[bank] = (data[bank] + 500000) > 10000000 and 10000000 or (data[bank] + 500000)
         xPlayer.removeInventoryItem("moneybag", 1)
-        TriggerClientEvent(Ultimate.GetTrigger("esx:showNotification"), source, Locale[Config.Locale]["delivery_success"
+        TriggerClientEvent(Ultimate.GetTrigger("esx:showNotification"), source,
+            Locale[Config.Locale]["delivery_success"
             ])
     else
         TriggerClientEvent(Ultimate.GetTrigger("esx:showNotification"), source, Locale[Config.Locale]["no_money_bags"])
     end
 end)
 
-RegisterServerEvent("Ultimate:PickupBags")
-AddEventHandler("Ultimate:PickupBags", function()
+RegisterServerEvent("UltimateBankDelivery:PickupBags")
+AddEventHandler("UltimateBankDelivery:PickupBags", function()
     local xPlayer = ESX.GetPlayerFromId(source)
     if xPlayer.getInventoryItem().count < 20 then
         xPlayer.addInventoryItem("moneybag", 10)
@@ -63,7 +67,7 @@ Citizen.CreateThread(function()
     data = json.decode(LoadResourceFile(GetCurrentResourceName(), "./data.json"))
 
     if not data then
-        print("^7[^2UltimateAC^7] An error occurred while loading data.json, recreating...")
+        print("^7[^UltimateBankDelivery^7] An error occurred while loading data.json, recreating...")
         SaveResourceFile(GetCurrentResourceName(), "./data.json", json.encode({}), -1)
         data = {}
     end
