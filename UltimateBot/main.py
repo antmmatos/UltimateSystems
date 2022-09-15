@@ -7,6 +7,60 @@ import datetime
 
 client = discord.Bot(intents=discord.Intents.all())
 
+organizacoes = {
+    "Aztecas": 931721375306108948,
+    "Cartel": 876547454663786539,
+    "TheFamilies": 876547454647033952,
+    "Mafia": 876547454647033950,
+    "CosaNostra": 876547454647033948,
+    "Vanilla": 876547454634455058,
+    "EastCustoms": 876547454634455060,
+    "Yakuza": 876547454634455057,
+    "Bahamas": 876906196169261096,
+    "Anonymous": 910905389174886440,
+    "PeakyBlinders": 910906926756401172,
+    "Bloods": 910909157513764915,
+    "Lowriders": 910909346626543646,
+    "Crips": 923695775089852446,
+    "LosVagos": 954083662192869387,
+    "Ballas": 966041504705572864,
+    "SonsOfAnarchy": 974744945313329182,
+    "MedusaBar": 983397697375576134,
+    "Pearls": 992479971484377189,
+    "BlackShadow": 993138356592578680,
+    "ComandoVermelho": 993258163564458005,
+    "Camorra": 997533723694219354,
+    "MerryWeather": 998904263625420871,
+    "Bratva": 1001171433982005328,
+    "ShishaBarLounge": 1007702058348060753,
+    "TheLostMC": 1011410200391069838,
+    "ChefeAztecas": 931723128072200223,
+    "ChefeCartel": 876547454663786540,
+    "ChefeTheFamilies": 876547454647033953,
+    "ChefeMafia": 876547454647033951,
+    "ChefeCosaNostra": 876547454647033949,
+    "ChefeVanilla": 876547454634455059,
+    "ChefeEastCustoms": 876547454647033947,
+    "ChefeYakuza": 876547454634455056,
+    "ChefeBahamas": 876904539444359178,
+    "ChefeAnonymous": 931375098181586995,
+    "ChefePeakyBlinders": 931375361634234408,
+    "ChefeBloods": 931375948404772934,
+    "ChefeLowriders": 931376130898923571,
+    "ChefeCrips": 931376371756843098,
+    "ChefeLosVagos": 955903013661311096,
+    "ChefeBallas": 955904065546641438,
+    "ChefeSonsOfAnarchy": 974744105986965554,
+    "ChefeMedusaBar": 983398052440211486,
+    "ChefePearls": 992479552184012962,
+    "ChefeBlackShadow": 993138521260965929,
+    "ChefeComandoVermelho": 993571313161609229,
+    "ChefeCamorra": 997534023838597293,
+    "ChefeMerryWeather": 998903623637540976,
+    "ChefeBratva": 1001171556812193803,
+    "ChefeShishaBarLounge": 1007702349839614146,
+    "ChefeTheLostMC": 1011410626742071417,
+}
 
 @client.event
 async def on_ready():
@@ -241,56 +295,96 @@ async def limpar(ctx, quantidade: int = None):
 
 @client.command(description="Comando para enviar anúncios.")
 @commands.has_permissions(administrator=True)
-async def anuncio(ctx, acao: Option(str, "Ação", choices=["enviar", "adicionar", "remover", "cancelar", "lista"]), tipo: Option(str, "Tipo", required=False), *, mensagem: Option(str, "Mensagem", required=False)):
-    if acao == "enviar":
-        # TODO Enviar anuncio
-        pass
-    elif acao == "adicionar":
-        await ctx.defer()
-        mysqlconnection = mysql.connector.connect(
+async def anuncio(ctx, ação: Option(str, "Ação", choices=["enviar", "adicionar", "remover", "lista"]), argumento2: Option(str, "Argumento 2", required=False), *, mensagem: Option(str, "Mensagem", required=False)):
+    mysqlconnection = mysql.connector.connect(
             host="localhost",
             user="root",
             password="",
             database="discord",
             auth_plugin='mysql_native_password'
         )
-        mysqlcursor = mysqlconnection.cursor()
-        mysqlcursor.execute(
-            f"INSERT INTO `anunciodata` (`update`,`tipo`) VALUES ('{mensagem}', '{tipo}')")
-        mysqlconnection.commit()
-    elif acao == "remover":
-        await ctx.defer()
-        mysqlconnection = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="discord",
-            auth_plugin='mysql_native_password'
-        )
-        mysqlcursor = mysqlconnection.cursor()
-        mysqlcursor.execute("SELECT * FROM `anuncios`")
+    mysqlcursor = mysqlconnection.cursor()
+    if ação == "enviar":
+        novo = ""
+        alterado = ""
+        removido = ""
+        corrigido = ""
+        mysqlcursor.execute("SELECT * FROM `anunciodata`")
         result = mysqlcursor.fetchall()
+        mysqlcursor.execute("SELECT * FROM `updatecounter`")
+        uv = mysqlcursor.fetchone()
+        uv = int(uv[0])
+        embed = discord.Embed(title=f"UPDATE",
+                                  description=f"```UV: {uv}```", color=discord.Colour.random())
+        embed.set_thumbnail(url="https://i.imgur.com/JUIUqvJ.png")
+        embed.set_footer(text="UltimateBot • 2022")
+        embed.timestamp = datetime.datetime.now()
         for x in result:
-            if mensagem in x[1]:
-                mysqlcursor.execute(
-                    f"DELETE FROM `anuncios` WHERE `mensagem` = '{x[1]}'")
-                mysqlconnection.commit()
-                embed = discord.Embed(title=f"{ctx.author.display_name}",
-                                      description=f"```Anúncio removido com sucesso!```", color=discord.Colour.random())
-                embed.set_thumbnail(url=f"{ctx.author.avatar.url}")
-                embed.set_footer(text="UltimateBot • 2022")
-                embed.timestamp = datetime.datetime.now()
-                await ctx.respond(embed=embed, delete_after=10)
-    elif acao == "lista":
+            if x[2] == "novo":
+                novo += f"<:novo:919661456830656512> {x[1]}\n"
+            elif x[2] == "alterado":
+                alterado += f"<:alterado:919667618120630283> {x[1]}\n"
+            elif x[2] == "removido":
+                removido += f"<:removido:919661469157699635> {x[1]}\n"
+            elif x[2] == "corrigido":
+                corrigido += f"<:bug1:919662472472973363> {x[1]}\n"
+        embed.add_field(name="<:novo:919661456830656512> ```Novo```", value=f"**{novo}**\n", inline=False)
+        embed.add_field(name="<:alterado:919667618120630283> ```Alterado```", value=f"**{alterado}**\n", inline=False)
+        embed.add_field(name="<:removido:919661469157699635> ```Removido```", value=f"**{removido}**\n", inline=False)
+        embed.add_field(name="<:bug1:919662472472973363> ```Corrigido```", value=f"**{corrigido}**\n", inline=False)
+        await ctx.respond(embed=embed)
+        mysqlcursor.execute(f"UPDATE `updatecounter` SET `counter` = {uv+1}")
+        mysqlconnection.commit()
+    elif ação == "adicionar":
+        if argumento2 == None or mensagem == None or not (argumento2 in ["novo", "alterado", "removido", "corrigido"]):
+            embed = discord.Embed(title=f"{ctx.author.display_name}",
+                                  description=f"```Use: /anuncio adicionar <tipo> <mensagem>```", color=discord.Colour.random())
+            embed.add_field(name="Tipos", value="``` - novo\n - alterado\n - removido\n - corrigido```")
+            embed.set_thumbnail(url=f"{ctx.author.avatar.url}")
+            embed.set_footer(text="UltimateBot • 2022")
+            embed.timestamp = datetime.datetime.now()
+            await ctx.respond(embed=embed, delete_after=5)
+            return
         await ctx.defer()
-        mysqlconnection = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="discord",
-            auth_plugin='mysql_native_password'
-        )
-        mysqlcursor = mysqlconnection.cursor()
+        mysqlcursor.execute(
+            f"INSERT INTO `anunciodata` (`update`,`tipo`) VALUES ('{mensagem}', '{argumento2}')")
+        mysqlconnection.commit()
+        embed = discord.Embed(title=f"{ctx.author.display_name}",
+                              description=f"```Mensagem {mensagem} adicionada à categoria {argumento2}```", color=discord.Colour.random())
+        embed.set_thumbnail(url=f"{ctx.author.avatar.url}")
+        embed.set_footer(text="UltimateBot • 2022")
+        embed.timestamp = datetime.datetime.now()
+        await ctx.respond(embed=embed)
+    elif ação == "remover":
+        if argumento2 == None:
+            embed = discord.Embed(title=f"{ctx.author.display_name}",
+                                  description=f"```Use: /anuncio remover <ID>```", color=discord.Colour.random())
+            embed.set_thumbnail(url=f"{ctx.author.avatar.url}")
+            embed.set_footer(text="UltimateBot • 2022")
+            embed.timestamp = datetime.datetime.now()
+            await ctx.respond(embed=embed, delete_after=5)
+            return
+        await ctx.defer()
+        mysqlcursor.execute(f"SELECT * FROM `anunciodata` WHERE ID = {argumento2}")
+        result = mysqlcursor.fetchone()
+        if result:
+            mysqlcursor.execute(f"DELETE FROM `anunciodata` WHERE ID = {argumento2}")
+            mysqlconnection.commit()
+            embed = discord.Embed(title=f"{ctx.author.display_name}",
+                              description=f"```Mensagem com o ID {argumento2} ({result[1]}) apagada```", color=discord.Colour.random())
+            embed.set_thumbnail(url=f"{ctx.author.avatar.url}")
+            embed.set_footer(text="UltimateBot • 2022")
+            embed.timestamp = datetime.datetime.now()
+            await ctx.respond(embed=embed)
+        else:
+            embed = discord.Embed(title=f"{ctx.author.display_name}",
+                              description=f"```Mensagem com o ID {argumento2} não encontrada```", color=discord.Colour.random())
+            embed.set_thumbnail(url=f"{ctx.author.avatar.url}")
+            embed.set_footer(text="UltimateBot • 2022")
+            embed.timestamp = datetime.datetime.now()
+            await ctx.respond(embed=embed, delete_after=10)
+    elif ação == "lista":
+        await ctx.defer()
         mysqlcursor.execute("SELECT * FROM `anunciodata` ORDER BY tipo")
         result = mysqlcursor.fetchall()
         embed = discord.Embed(title=f"{ctx.author.display_name}",
@@ -298,17 +392,20 @@ async def anuncio(ctx, acao: Option(str, "Ação", choices=["enviar", "adicionar
         embed.set_thumbnail(url=f"{ctx.author.avatar.url}")
         embed.set_footer(text="UltimateBot • 2022")
         embed.timestamp = datetime.datetime.now()
+        emoji = ""
         for x in result:
-            embed.add_field(name=f"Tipo: {x[2]}", value=f"{x[1]}", inline=False)
-        await ctx.respond(embed=embed, delete_after=10)
-    elif acao == "cancelar":
-        await ctx.defer()
-        embed = discord.Embed(title=f"{ctx.author.display_name}",
-                              description=f"```Anúncio cancelado!```", color=discord.Colour.random())
-        embed.set_thumbnail(url=f"{ctx.author.avatar.url}")
-        embed.set_footer(text="UltimateBot • 2022")
-        embed.timestamp = datetime.datetime.now()
-        await ctx.respond(embed=embed, delete_after=10)
+            if x[2] == "novo":
+                emoji = "<:novo:919661456830656512>"
+            elif x[2] == "alterado":
+                emoji = "<:alterado:919667618120630283>"
+            elif x[2] == "removido":
+                emoji = "<:removido:919661469157699635>"
+            elif x[2] == "corrigido":
+                emoji = "<:bug1:919662472472973363>"
+            embed.add_field(name=f"{emoji} {x[1]}", value=f"ID: {x[0]}\n", inline=False)
+        else:
+            embed.description = f"```Lista de mensagens para o próximo anúncio vazia```"
+        await ctx.respond(embed=embed)
 
 
 @client.command(description="Comando para dar cooldown a um membro. Requer permissões de administrador.")
@@ -361,6 +458,10 @@ async def cooldown(ctx, membro: discord.Member = None):
             embed.set_footer(text="UltimateBot • 2022")
             embed.timestamp = datetime.datetime.now()
             await ctx.respond(embed=embed)
+            for x in organizacoes:
+                role = discord.utils.get(ctx.guild.roles, id=organizacoes[x])
+                if role in membro.roles:
+                    await membro.remove_roles(role)
         else:
             mysqlcursor.execute(
                 f"SELECT * FROM `cooldown` WHERE `userid` = {membro.id}")
@@ -703,14 +804,14 @@ class AvisoCMD(discord.ui.View):  # Create a class called MyView that subclasses
 @commands.has_permissions(manage_roles=True)
 async def aviso(ctx, membro: discord.Member = None):
     if membro == None:
-        embed = discord.Embed(title=f"{ctx.author.nick}",
+        embed = discord.Embed(title=f"{ctx.author.display_name}",
                               description=f"```Use: /aviso <@Membro>```", color=discord.Colour.random())
         embed.set_thumbnail(url=f"{ctx.author.avatar.url}")
         embed.set_footer(text="UltimateBot • 2022")
         embed.timestamp = datetime.datetime.now()
         await ctx.respond(embed=embed, delete_after=5)
     else:
-        embed = discord.Embed(title=f"{ctx.author.nick}",
+        embed = discord.Embed(title=f"{ctx.author.display_name}",
                               description=f"```Selecione o tipo de aviso que quer dar ao membro {membro.display_name}.```", color=discord.Colour.random())
         embed.set_thumbnail(url=f"{ctx.author.avatar.url}")
         embed.set_footer(text="UltimateBot • 2022")

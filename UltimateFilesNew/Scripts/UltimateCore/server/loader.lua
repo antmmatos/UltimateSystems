@@ -3,7 +3,8 @@ UltimateValidLicenses = {
     ["UltimateCore"] = false,
     ["UltimateAC"] = false,
     ["UltimateCryptoSystem"] = false,
-    ["UltimateHud"] = false
+    ["UltimateHud"] = false,
+    ["UltimateBankDelivery"] = false
 }
 
 function ExitIfCore(scriptName)
