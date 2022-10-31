@@ -37,5 +37,5 @@ Config = {
 
     MaxPedsSpawn = 5, -- Per 5 seconds
 
-    MaxVehicleSpawn = 5, -- Per 5 seconds
+    MaxVehicleSpawn = 10, -- Per 5 seconds
 }

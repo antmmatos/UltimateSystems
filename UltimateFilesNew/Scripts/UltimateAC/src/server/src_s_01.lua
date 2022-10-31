@@ -107,11 +107,11 @@ end)
 
 Ultimate.CreateCallback("UltimateAC:getAllPlayers", function(source, cb)
     local AllPlayers = ESX.GetPlayers()
-    local names = {}
+    local TablePlayers = {}
     for i = 1, #AllPlayers do
-        names[i] = GetPlayerName(AllPlayers[i])
+        TablePlayers[AllPlayers[i]] = GetPlayerName(AllPlayers[i])
     end
-    cb(AllPlayers, names)
+    cb(TablePlayers)
 end)
 
 local BlockedExplosions = {0, 1, 2, 4, 5, 18, 19, 32, 33, 37, 38}
@@ -123,8 +123,8 @@ AddEventHandler("explosionEvent", function(sender, ev)
                 local uPlayer = Ultimate.GetPlayerFromId(tonumber(sender))
                 if not uPlayer.isAdmin() then
                     TriggerEvent("UltimateAC:BanPlayer", string.format(Locale[Config.Locale]["BanMessage"],
-                        Locale[Config.Locale]["ExplosionDetected"]), "AntiCheat", sender,
-                        Locale[Config.Locale]["ExplosionDetected"])
+                        string.format(Locale[Config.Locale]["ExplosionDetected"], ev.explosionType)), "AntiCheat", sender,
+                        string.format(Locale[Config.Locale]["ExplosionDetected"], ev.explosionType))
                     CancelEvent()
                 end
             end
@@ -459,6 +459,9 @@ AddEventHandler("entityCreating", function(entity)
                         end
                     end
                 end
+                if inTableHash(Whitelist["Peds"], model) then
+                    return
+                end
                 pedsSpawned[_src] = (pedsSpawned[_src] or 0) + 1
                 if pedsSpawned[_src] > Config.MaxPedsSpawn then
                     LogPropsMass(_src, pedsSpawned[_src], model)
@@ -584,6 +587,7 @@ RegisterCommand("unoclip", function(source, args, rawCommand)
             return
         end
         local uPlayer = Ultimate.GetPlayerFromId(tonumber(source))
+        if not uPlayer then return end
         if uPlayer.isAdmin() then
             TriggerClientEvent("UltimateAC:unoclip", source)
         end
@@ -608,7 +612,6 @@ RegisterCommand("print", function(source, args, rawCommand)
     if Validated then
         local _source = source
         if source ~= 0 then
-            local _source = source
             local uPlayer = Ultimate.GetPlayerFromId(tonumber(_source))
             if uPlayer.isAdmin() then
                 if not args[1] then
@@ -634,9 +637,14 @@ RegisterCommand("print", function(source, args, rawCommand)
 end)
 
 function ScreenshotCommand(link, source, player)
-    local message = "[Click here](" .. link .. ") to see a Screenshot from Player " .. GetPlayerName(player) ..
-                        " with ID: " .. player .. " requested by " .. GetPlayerName(source) .. " with ID: " .. source ..
-                        "."
+    local message
+    if source == "Console" then
+        message = "[Click here](" .. link .. ") to see a Screenshot from Player " .. GetPlayerName(player) ..
+                        " with ID: " .. player .. " requested by Console."
+    else
+        message = "[Click here](" .. link .. ") to see a Screenshot from Player " .. GetPlayerName(player) ..
+                        " with ID: " .. player .. " requested by " .. GetPlayerName(source) .. " with ID: " .. source .. "."
+    end
     local logembed = {{
         color = "15536915",
         title = "**UltimateAnticheat**",

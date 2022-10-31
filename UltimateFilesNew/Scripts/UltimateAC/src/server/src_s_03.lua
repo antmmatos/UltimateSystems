@@ -1,4 +1,4 @@
-local filestring = 'client_script "@' .. GetCurrentResourceName() .. '/src/Client/src_c_06.lua"'
+local filestring = 'client_script "@' .. GetCurrentResourceName() .. '/src/client/src_c_06.lua"'
 local installedResourcesNum
 
 RegisterCommand("ultimatemanager", function(source, args, rawCommand)
@@ -17,26 +17,29 @@ RegisterCommand("ultimatemanager", function(source, args, rawCommand)
                     local resourcenumber = GetNumResources()
                     local installedResources = {}
                     for i = 0, resourcenumber - 1 do
+                        found = false
                         local path = GetResourcePath(GetResourceByFindIndex(i))
-                        local File = io.open(path .. "/fxmanifest.lua", "r")
-                        if File then
+                        local File1 = io.open(path .. "/fxmanifest.lua", "r")
+                        if File1 then
                             if not string.find(path, GetCurrentResourceName()) then
                                 if string.len(path) > 4 then
-                                    local File = io.open(path .. "/fxmanifest.lua", "r")
+                                    local File2 = io.open(path .. "/fxmanifest.lua", "r")
                                     for line in io.lines(path .. "/fxmanifest.lua") do
                                         if line == filestring then
                                             found = true
                                         end
                                     end
+                                    File2:close()
                                     if not found then
-                                        File = io.open(path .. "/fxmanifest.lua", "a+")
-                                        File:write("\n\n" .. filestring)
-                                        File:close()
+                                        local File3 = io.open(path .. "/fxmanifest.lua", "a+")
+                                        File3:write("\n\n" .. filestring)
+                                        File3:close()
                                         table.insert(installedResources, GetResourceByFindIndex(i))
                                         installedResourcesNum = installedResourcesNum + 1
                                     end
                                 end
                             end
+                            File1:close()
                         end
                     end
                     print("----------------------------------------------------------------")
@@ -53,26 +56,29 @@ RegisterCommand("ultimatemanager", function(source, args, rawCommand)
                     local resourcenumber = GetNumResources()
                     local installedResources = {}
                     for i = 0, resourcenumber - 1 do
+                        found = false
                         local path = GetResourcePath(GetResourceByFindIndex(i))
-                        local File = io.open(path .. "/__resource.lua", "r")
-                        if File then
+                        local File1 = io.open(path .. "/__resource.lua", "r")
+                        if File1 then
                             if not string.find(path, GetCurrentResourceName()) then
                                 if string.len(path) > 4 then
-                                    local File = io.open(path .. "/__resource.lua", "r")
+                                    local File2 = io.open(path .. "/__resource.lua", "r")
                                     for line in io.lines(path .. "/__resource.lua") do
                                         if line == filestring then
                                             found = true
                                         end
                                     end
+                                    File2:close()
                                     if not found then
-                                        File = io.open(path .. "/__resource.lua", "a+")
-                                        File:write("\n\n" .. filestring)
-                                        File:close()
+                                        local File3 = io.open(path .. "/__resource.lua", "a+")
+                                        File3:write("\n\n" .. filestring)
+                                        File3:close()
                                         table.insert(installedResources, GetResourceByFindIndex(i))
                                         installedResourcesNum = installedResourcesNum + 1
                                     end
                                 end
                             end
+                            File1:close()
                         end
                     end
                     print("----------------------------------------------------------------")
@@ -97,7 +103,7 @@ RegisterCommand("ultimatemanager", function(source, args, rawCommand)
                                 File:seek("set", 0)
                                 local read = File:read("*a")
                                 File:close()
-                                local splited = Split(read, "\n")
+                                local splited = Ultimate.Split(read, "\n")
                                 local stringmodified = ""
                                 for _, v in ipairs(splited) do
                                     if v == filestring then
@@ -128,7 +134,7 @@ RegisterCommand("ultimatemanager", function(source, args, rawCommand)
                                 File:seek("set", 0)
                                 local read = File:read("*a")
                                 File:close()
-                                local splited = Split(read, "\n")
+                                local splited = Ultimate.Split(read, "\n")
                                 local stringmodified = ""
                                 for _, v in ipairs(splited) do
                                     if v == filestring then

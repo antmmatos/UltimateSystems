@@ -179,8 +179,8 @@ function ManageHeadLabels(value)
 
                     DrawText3D(GetEntityCoords(iPed)["x"], GetEntityCoords(iPed)["y"],
                         GetEntityCoords(iPed)["z"] + 1,
-                        GetPlayerServerId(i) .. "  |  ~g~" .. GetPlayerName(i) .. "~n~~r~Health~w~: " ..
-                            GetEntityHealth(iPed) .. " | ~b~Armor~w~: " .. GetPedArmour(iPed).."~n~~y~Distance~w~: "..math.ceil(Vdist(GetEntityCoords(iPed), GetEntityCoords(PlayerPedId()))))
+                        "~y~"..GetPlayerServerId(i) .. "  |  ~g~" .. GetPlayerName(i) .. "~n~~r~Health~w~: " ..
+                            GetEntityHealth(iPed) .. " | ~b~Armor~w~: " .. GetPedArmour(iPed))
                 end
             end
         end

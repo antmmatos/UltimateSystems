@@ -14,3 +14,5 @@ Blacklist["Peds"] = {"u_m_y_mani", "a_m_y_motox_01", "cs_movpremf_01", "cs_movpr
                      "s_m_y_armymech_01", "s_m_y_blackops_01", "s_m_y_blackops_02", "s_m_y_blackops_03",
                      "s_m_m_movalien_01", "s_m_y_factory_01", "s_f_y_factory_01", "mp_m_fibsec_01", "s_m_m_fibsec_01",
                      "a_m_m_tranvest_01", "a_m_m_tranvest_02", "g_m_m_chemwork_01", "a_m_m_hasjew_01"}
+
+Whitelist["Peds"] = {"a_c_deer", "a_c_boar", "a_c_mtlion", "a_c_coyote"}
